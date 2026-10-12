@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stats Checks — Match Analysis</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#172239;--line:#293650;--text:#eef3ff;--muted:#9ba9c4;--green:#37d69a;--blue:#6c8cff;--amber:#ffc66d;--red:#ff7b87}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172448 0,#0b1020 48%);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}
+.wrap{max-width:1120px;margin:auto;padding:26px 18px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:25px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#4f7cff,#36d6a0);display:grid;place-items:center;font-size:23px;font-weight:900;color:#081426}
+h1{font-size:24px;line-height:1.1;margin:0;letter-spacing:-.5px}h1 span{color:var(--green)}.sub{color:var(--muted);font-size:13px;margin-top:5px}
+.pill{border:1px solid #315b50;color:#9bf0cf;background:#102a29;border-radius:999px;padding:7px 11px;font-size:12px}
+.hero{padding:25px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(26,39,67,.96),rgba(16,24,42,.96));box-shadow:0 18px 60px #0003}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.6px;color:var(--green);font-weight:800}
+h2{font-size:25px;line-height:1.2;letter-spacing:-.5px;margin:8px 0}.lead{color:var(--muted);max-width:720px;margin:0 0 20px}
+label{display:block;font-size:13px;color:#cbd6ec;margin-bottom:7px;font-weight:650}input,select,textarea{width:100%;background:#0c1425;border:1px solid #33425f;border-radius:11px;color:var(--text);padding:13px 14px;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #6c8cff22}
+.code-row{display:flex;gap:10px}.code-row input{flex:1;min-width:0}.btn{border:0;border-radius:11px;padding:12px 18px;font-weight:800;font:inherit;cursor:pointer;transition:.15s}.primary{background:var(--green);color:#062016}.secondary{background:#263654;color:#eaf0ff;border:1px solid #3b4b6b}.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.note{font-size:12px;color:var(--muted);margin-top:10px}.notice{display:none;margin-top:15px;border-radius:12px;padding:12px 14px;background:#35291a;border:1px solid #76562c;color:#ffdfaa;font-size:13px;overflow-wrap:anywhere}.notice.ok{background:#102a29;border-color:#315b50;color:#9bf0cf}.notice.error{background:#351e2a;border-color:#70404b;color:#ffb9c0}
+.section{margin-top:24px}.section-head{display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:12px}.section-head h3{margin:0;font-size:18px}.section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.sports{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.sport{padding:15px 8px;border:1px solid var(--line);border-radius:14px;background:var(--panel);text-align:center;cursor:pointer;color:var(--text)}.sport.active{border-color:var(--green);background:#102a2a;box-shadow:inset 0 0 0 1px #37d69a33}.sport .emoji{font-size:23px;display:block;margin-bottom:6px}.sport small{display:block;color:var(--muted);font-size:11px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:15px}.card{border:1px solid var(--line);border-radius:17px;background:var(--panel);padding:18px}.card h3{font-size:16px;margin:0 0 5px}.muted{color:var(--muted);font-size:13px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}.field.full{grid-column:1/-1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}.stat{padding:13px;border:1px solid var(--line);background:#0c1425;border-radius:12px}.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
+.result{margin-top:13px;padding:13px;border:1px dashed #425373;border-radius:12px;color:var(--muted);font-size:13px;min-height:66px}.selections{margin-top:12px;display:grid;gap:10px}.selection{padding:12px;border:1px solid var(--line);background:#0c1425;border-radius:12px}.selection strong{display:block;color:var(--text);margin-bottom:3px}.selection .meta{font-size:12px;color:var(--muted)}.selection .odds{float:right;color:var(--green);font-weight:800}
+ul{padding-left:18px;color:var(--muted);font-size:13px}li{margin:7px 0}.warning{color:#ffd18b}.green{color:var(--green)}
+footer{margin-top:26px;color:#8290ab;font-size:11px;text-align:center}.footlinks{display:flex;justify-content:center;gap:16px;margin-bottom:8px}
+@media(max-width:760px){.sports{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}.hero{padding:19px}h2{font-size:22px}.code-row{flex-direction:column}.code-row .btn{width:100%}}
+@media(max-width:420px){.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <div class="brand"><div class="logo">S</div><div><h1>stats <span>checks</span></h1><div class="sub">Sports fixtures · form checks · evidence-first analysis</div></div></div>
+ <div class="pill" id="statusPill">● Booking lookup ready to test</div>
+</header>
+<section class="hero">
+ <div class="eyebrow">Daily match research</div>
+ <h2>Check the form. Understand the risk.</h2>
+ <p class="lead">Load a SportyBet booking code to display the selections, then check their form. Stats Checks does not promise wins or label any selection as certain.</p>
+ <label for="booking">SportyBet booking code</label>
+ <div class="code-row"><input id="booking" placeholder="Paste a booking code here (e.g. ABC123)" autocomplete="off" maxlength="40" autocapitalize="characters"><button class="btn primary" id="analyze">Load &amp; analyse code</button></div>
+ <div class="note">This version includes a backend lookup route. Run the included server and keep it online; SportyBet's web endpoint is unofficial and may change.</div>
+ <div class="notice" id="codeNotice" role="status" aria-live="polite"></div>
+ <div id="selectionList" class="selections"></div>
+</section>
+
+<section class="section">
+ <div class="section-head"><div><h3>Choose a sport</h3><p>Select a sport to focus your daily fixture research.</p></div><span class="pill">6 sports requested</span></div>
+ <div class="sports" id="sports">
+  <button class="sport active" data-sport="Football"><span class="emoji">⚽</span>Football<small>1X2 · goals</small></button>
+  <button class="sport" data-sport="Basketball"><span class="emoji">🏀</span>Basketball<small>totals · halves</small></button>
+  <button class="sport" data-sport="Tennis"><span class="emoji">🎾</span>Tennis<small>match winner</small></button>
+  <button class="sport" data-sport="Darts"><span class="emoji">🎯</span>Darts<small>match winner</small></button>
+  <button class="sport" data-sport="Snooker"><span class="emoji">🎱</span>Snooker<small>frame / match</small></button>
+  <button class="sport" data-sport="Volleyball"><span class="emoji">🏐</span>Volleyball<small>match winner</small></button>
+ </div>
+</section>
+
+<section class="section grid">
+ <div class="card">
+  <h3 id="sportTitle">Football analysis workspace</h3>
+  <div class="muted">Enter a fixture and its last 10 comparable results to calculate a simple historical hit rate.</div>
+  <div class="fields">
+   <div class="field full"><label for="fixture">Fixture / player matchup</label><input id="fixture" placeholder="e.g. Team A vs Team B"></div>
+   <div class="field"><label for="market">Market / condition tested</label><select id="market"><option>Home / draw / away pick</option><option>Over 1.5 total goals</option><option>Over 2.5 total goals</option><option>Both teams to score</option><option>Match winner</option><option>Over 17.5 total points</option><option>Other market</option></select></div>
+   <div class="field"><label for="hits">Hits in last 10</label><select id="hits"><option value="">Choose result</option><option value="10">10 of 10</option><option value="9">9 of 10</option><option value="8">8 of 10</option><option value="7">7 of 10</option><option value="6">6 of 10</option><option value="5">5 of 10</option><option value="4">4 of 10</option><option value="3">3 of 10</option><option value="2">2 of 10</option><option value="1">1 of 10</option><option value="0">0 of 10</option></select></div>
+   <div class="field full"><button class="btn primary" id="calculate">Calculate historical rate</button></div>
+  </div>
+  <div class="result" id="result">No analysis yet. Add a matchup and a verified count from comparable recent results.</div>
+ </div>
+ <aside class="card">
+  <h3>How the daily shortlist should work</h3>
+  <div class="muted">A full version connects a permitted fixture/results source, then ranks available markets using transparent evidence.</div>
+  <div class="stats"><div class="stat"><b>10</b><span>recent matches per check</span></div><div class="stat"><b>90%</b><span>requested filter, not a guarantee</span></div><div class="stat"><b id="feedStatus">Test</b><span>booking lookup mode</span></div></div>
+  <ul>
+   <li>Use comparable competition, surface/format, venue and market conditions.</li>
+   <li>Show sample size, date of last update, odds and unavailable-data warnings.</li>
+   <li>Do not call a pick “90% likely” just because it won 9 of the last 10.</li>
+  </ul>
+  <p class="warning" style="font-size:12px">A 9/10 historical hit rate is a small sample, not proof that the next event has a 90% chance of winning.</p>
+ </aside>
+</section>
+<section class="section card">
+ <h3>Connection status &amp; limitations</h3>
+ <p class="muted">Booking-code lookup runs through the included server to avoid browser cross-origin restrictions. It uses an undocumented SportyBet web endpoint, not an official public developer API, so it can stop working if SportyBet changes its service.</p>
+ <p class="muted">Loading a booking code retrieves the slip; it does not automatically verify historical results or calculate reliable live predictions. Those need a separate results-data integration.</p>
+ <a href="https://www.sportybet.com/ng/m/code-hub/load-code" target="_blank" rel="noopener" style="color:#91adff">Open SportyBet booking-code page ↗</a>
+</section>
+<footer><div class="footlinks"><span>Stats Checks</span><span>Responsible research</span><span>18+ only</span></div>For information only. No bets are placed by this app. Betting involves risk; never stake money you cannot afford to lose.</footer>
+</div>
+<script>
+const sportTitle=document.getElementById('sportTitle');
+document.querySelectorAll('.sport').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.sport').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active');
+ const s=btn.dataset.sport;
+ sportTitle.textContent=s+' analysis workspace';
+ const market=document.getElementById('market');
+ const options={
+  Football:['Home / draw / away pick','Over 1.5 total goals','Over 2.5 total goals','Both teams to score','Other market'],
+  Basketball:['Match winner','Over total points','First-half over total points','Other market'],
+  Tennis:['Match winner','Over total games','Set winner','Other market'],
+  Darts:['Match winner','Over total legs','Handicap','Other market'],
+  Snooker:['Match winner','Frames handicap','Total frames','Other market'],
+  Volleyball:['Match winner','Over total points','Set winner','Other market']
+ };
+ market.innerHTML='';
+ options[s].forEach(o=>{const opt=document.createElement('option');opt.textContent=o;market.appendChild(opt)});
+}));
+function showNotice(message,kind='') {
+ const n=document.getElementById('codeNotice'); n.className='notice'+(kind?' '+kind:''); n.style.display='block'; n.textContent=message;
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function pick(o, keys){for(const k of keys){if(o && o[k]!==undefined && o[k]!==null && o[k]!=='')return o[k]}return ''}
+function renderSelections(data) {
+ const list=document.getElementById('selectionList'); list.innerHTML='';
+ const legs=Array.isArray(data.selections)?data.selections:[];
+ if(!legs.length){showNotice(data.message || 'The code was retrieved, but no selections were found in the response. It may be expired or SportyBet may have changed its response format.','error');return;}
+ legs.forEach((leg,i)=>{
+   const home=pick(leg,['homeTeamName','homeTeam','home','homeName']);
+   const away=pick(leg,['awayTeamName','awayTeam','away','awayName']);
+   const event=pick(leg,['eventName','event','matchName']);
+   const title=(home && away)?`${home} vs ${away}`:event || `Selection ${i+1}`;
+   const market=pick(leg,['marketName','marketDesc','market','marketDescName']);
+   const outcome=pick(leg,['outcomeName','outcomeDesc','selectionName','pick','desc']);
+   const odds=pick(leg,['odds','odd','currentOdds']);
+   const kickoff=pick(leg,['kickoffTime','startTime','estimateStartTime']);
+   const div=document.createElement('div'); div.className='selection';
+   div.innerHTML=(odds?`<span class="odds">${esc(odds)}</span>`:'')+`<strong>${esc(title)}</strong><div class="meta">${esc(market)}${market&&outcome?' · ':''}${esc(outcome)}</div>`+(kickoff?`<div class="meta">Start: ${esc(kickoff)}</div>`:'');
+   list.appendChild(div);
+ });
+ showNotice(`Booking code loaded. ${legs.length} selection(s) returned. This confirms the slip data was retrieved; it does not predict the outcomes.`,'ok');
+}
+async function loadCode(){
+ const input=document.getElementById('booking'), btn=document.getElementById('analyze'), code=input.value.trim().toUpperCase();
+ const list=document.getElementById('selectionList'); list.innerHTML='';
+ if(!code){showNotice('Enter your SportyBet booking code first.','error');input.focus();return;}
+ if(!/^[A-Z0-9_-]{4,40}$/.test(code)){showNotice('That code format looks unusual. Enter only the booking code characters, without a URL or spaces.','error');return;}
+ btn.disabled=true;btn.textContent='Checking…';showNotice('Contacting the Stats Checks backend…');
+ try{
+   const response=await fetch('/api/booking/'+encodeURIComponent(code),{headers:{'Accept':'application/json'}});
+   const data=await response.json().catch(()=>({error:'The server returned a non-JSON response.'}));
+   if(!response.ok) throw new Error(data.error || `Lookup failed (HTTP ${response.status}).`);
+   renderSelections(data);
+ }catch(err){
+   showNotice((err.message||'Could not load the code.')+' Make sure you started the included server and opened Stats Checks at http://localhost:3000 (not by opening the HTML file directly).','error');
+ }finally{btn.disabled=false;btn.textContent='Load & analyse code';}
+}
+document.getElementById('analyze').addEventListener('click',loadCode);
+document.getElementById('booking').addEventListener('keydown',e=>{if(e.key==='Enter')loadCode()});
+document.getElementById('calculate').addEventListener('click',()=>{
+ const fixture=document.getElementById('fixture').value.trim();
+ const hits=document.getElementById('hits').value;
+ const market=document.getElementById('market').value;
+ const out=document.getElementById('result');
+ if(!fixture||hits===''){out.textContent='Enter the fixture and select how many of the last 10 comparable results met this condition.';return;}
+ const pct=Number(hits)*10;
+ out.innerHTML='<strong style="color:'+(pct>=90?'#37d69a':pct>=70?'#ffc66d':'#ff9aa4')+'">'+pct+'% historical hit rate</strong><br>'+
+ esc(fixture)+' · '+esc(market)+'<br>'+
+ '<span style="color:#9ba9c4">'+hits+' hits out of 10. This is a user-entered historical count, not a live prediction or a verified probability for the next match.</span>';
+});
+</script>
+</body>
+</html>
