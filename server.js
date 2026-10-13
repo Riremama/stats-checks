@@ -43,7 +43,7 @@ function normalizeLeg(leg) {
     }));
   });
 
-  return {
+  return {sport: leg.sport ?? leg.sportName ?? "",
     homeTeamName: leg.homeTeamName ?? leg.homeTeam ?? "",
     awayTeamName: leg.awayTeamName ?? leg.awayTeam ?? "",
     eventName: leg.eventName ?? leg.event ?? "",
