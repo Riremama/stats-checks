@@ -129,12 +129,7 @@ const legs = rawLegs.map(normalizeLeg);
       bookingCode: data.shareCode || data.code || code,
       expiresAt: data.deadline || data.expiresAt || null,
       selections: legs,
-      debug: {
-  dataKeys: Object.keys(data),
-  firstSelectionKeys: rawLegs.length
-    ? Object.keys(rawLegs[0])
-    : []
-},
+      
 note: "Retrieved from SportyBet's undocumented web endpoint. This is a slip lookup, not a prediction."
     });
   } catch (err) {
