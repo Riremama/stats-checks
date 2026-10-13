@@ -13,15 +13,48 @@ function firstArray(...values) {
 }
 
 function normalizeLeg(leg) {
-  // SportyBet's response shape is undocumented and may change.
+  const markets = Array.isArray(leg.markets)
+    ? leg.markets
+    : [];
+
+  const marketDetails = markets.flatMap(market => {
+    const outcomes = Array.isArray(market.outcomes)
+      ? market.outcomes
+      : [];
+
+    return outcomes.map(outcome => ({
+      marketName:
+        market.marketName ??
+        market.marketDesc ??
+        market.desc ??
+        market.name ??
+        "",
+      outcomeName:
+        outcome.outcomeName ??
+        outcome.outcomeDesc ??
+        outcome.name ??
+        outcome.desc ??
+        "",
+      odds:
+        outcome.odds ??
+        outcome.currentOdds ??
+        outcome.odd ??
+        ""
+    }));
+  });
+
   return {
-    homeTeamName: leg.homeTeamName ?? leg.homeTeam ?? leg.homeName ?? "",
-    awayTeamName: leg.awayTeamName ?? leg.awayTeam ?? leg.awayName ?? "",
-    eventName: leg.eventName ?? leg.event ?? leg.matchName ?? "",
-    marketName: leg.marketName ?? leg.marketDesc ?? leg.market ?? leg.marketDescName ?? "",
-    outcomeName: leg.outcomeName ?? leg.outcomeDesc ?? leg.selectionName ?? leg.pick ?? leg.desc ?? "",
-    odds: leg.odds ?? leg.currentOdds ?? leg.odd ?? "",
-    kickoffTime: leg.kickoffTime ?? leg.startTime ?? leg.estimateStartTime ?? "",
+    homeTeamName: leg.homeTeamName ?? leg.homeTeam ?? "",
+    awayTeamName: leg.awayTeamName ?? leg.awayTeam ?? "",
+    eventName: leg.eventName ?? leg.event ?? "",
+    marketName:
+      marketDetails.map(item => item.marketName).filter(Boolean).join(", "),
+    outcomeName:
+      marketDetails.map(item => item.outcomeName).filter(Boolean).join(", "),
+    odds:
+      marketDetails.map(item => item.odds).filter(Boolean).join(", "),
+    kickoffTime:
+      leg.kickoffTime ?? leg.estimateStartTime ?? leg.startTime ?? "",
     status: leg.status ?? leg.matchStatus ?? ""
   };
 }
