@@ -118,7 +118,8 @@ function renderSelections(data) {
  const legs=Array.isArray(data.selections)?data.selections:[];
  if(!legs.length){showNotice(data.message || 'The code was retrieved, but no selections were found in the response. It may be expired or SportyBet may have changed its response format.','error');return;}
  legs.forEach((leg,i)=>{
-   const home=pick(leg,['homeTeamName','homeTeam','home','homeName']);
+  const sport=pick(leg,['sport','sportName']);
+  const home=pick(leg,['homeTeamName','homeTeam','home','homeName']);
    const away=pick(leg,['awayTeamName','awayTeam','away','awayName']);
    const event=pick(leg,['eventName','event','matchName']);
    const title=(home && away)?`${home} vs ${away}`:event || `Selection ${i+1}`;
