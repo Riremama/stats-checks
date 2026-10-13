@@ -72,15 +72,18 @@ app.get("/api/booking/:code", async (req, res) => {
     }
 
     const data = payload.data ?? payload.result ?? payload;
-    const legs = firstArray(
-      data.outcomes,
-      data.selections,
-      data.items,
-      data.order?.outcomes,
-      data.order?.selections,
-      data.betSlip?.outcomes,
-      data.betSlip?.selections
-    ).map(normalizeLeg);
+    
+const rawLegs = firstArray(
+  data.outcomes,
+  data.selections,
+  data.items,
+  data.order?.outcomes,
+  data.order?.selections,
+  data.betSlip?.outcomes,
+  data.betSlip?.selections
+);
+
+const legs = rawLegs.map(normalizeLeg);
 
     if (!legs.length) {
       return res.status(422).json({
@@ -93,7 +96,13 @@ app.get("/api/booking/:code", async (req, res) => {
       bookingCode: data.shareCode || data.code || code,
       expiresAt: data.deadline || data.expiresAt || null,
       selections: legs,
-      note: "Retrieved from SportyBet's undocumented web endpoint. This is a slip lookup, not a prediction."
+      debug: {
+  dataKeys: Object.keys(data),
+  firstSelectionKeys: rawLegs.length
+    ? Object.keys(rawLegs[0])
+    : []
+},
+note: "Retrieved from SportyBet's undocumented web endpoint. This is a slip lookup, not a prediction."
     });
   } catch (err) {
     const timedOut = err.name === "AbortError";
